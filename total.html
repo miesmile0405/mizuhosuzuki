@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="googleSheets.js"></script>
+  </head>
+  <body>
+    
+      
+
+    
+      
+    <input type="button" id="mybtn1" value="クリック">
+    <div id="contents1"></div>
+    
+    <script>
+    /* global $ loadSheets */
+
+ $(function(){
+    // unsupported.
+        "use strict";
+      if (!'SpeechSynthesisUtterance' in window) {
+        alert('Speech synthesis(音声合成) APIには未対応です.');
+        return;
+      }
+    });
+ // 発話機能をインスタンス化
+      var msg = new SpeechSynthesisUtterance();      
+      var rnd;
+
+        
+      $(function(){
+        $("#mybtn1").on("click",showdata);  
+        async function showdata () {
+        rnd = Math.floor( Math.random() * 6 );
+
+        let data = await loadSheets('s1316230!B2:D10');
+        $("#contents1").append(data.values[rnd][2]);
+        $("#contents1").append("<img width='100px' height='100px' src='"+data.values[rnd][1]+"'/>");
+        msg.volume = 1.0; // 音量 min 0 ~ max 1
+        msg.rate = 1.0; // 速度 min 0 ~ max 10
+        msg.pitch = 1.2; // 音程 min 0 ~ max 2
+
+        msg.text = data.values[rnd][2]// 話す中身
+        msg.lang = 'ja-JP'; // en-US or ja-JP
+
+        speechSynthesis.speak(msg);
+
+        // 終了時の処理
+        msg.onend = function (event) {
+          console.log('喋った時間：' + event.elapsedTime + 's');
+        }
+  }; 
+});
+    </script>
+      
+      
+    <script async defer src="https://apis.google.com/js/api.js"
+      onload="this.onload=function(){};handleClientLoad()"
+      onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script>
+  </body>
+</html>
